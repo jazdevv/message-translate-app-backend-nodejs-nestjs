@@ -7,17 +7,17 @@ export class User{
     id: number;
 
     @Column({unique: true})
-    nametag: string;
+    username: string;
 
     @Column({unique: true})
     email: string
 
-    @Column()
+    @Column({default:""})
     profileImage: string;
 
     @Column()
     password: string
 
-    @Column({default: true})
+    @Column({default: false})
     isGoogleUser: boolean
 }
