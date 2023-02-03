@@ -30,6 +30,7 @@
     "mysql2": "^2.3.3",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
+    "sqlite3": "^5.1.4",
     "typeorm": "^0.3.11"
   },
   "devDependencies": {

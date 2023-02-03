@@ -9,6 +9,7 @@ import { Room } from './messages/rooms.entity'
 import { Message } from './messages/messages.entity'
 import { ConfigModule } from '@nestjs/config'
 
+
 @Module({
   
   imports: [
@@ -16,11 +17,12 @@ import { ConfigModule } from '@nestjs/config'
     MessagesModule,
     ConfigModule.forRoot({ envFilePath: `.env` }), 
     //without env variables
-    TypeOrmModule.forRoot({
-      type: 'sqlite',
+    TypeOrmModule.forRootAsync({
+      useFactory: ()=>({type: 'sqlite',
       database: 'db.sqlite',
-      entities: [User,Message,Room],
+      entities: ["join(__dirname, '**', '*.entity.{ts,js}')"],
       synchronize: true
+    })
     }),
   ],
   controllers: [AppController],
