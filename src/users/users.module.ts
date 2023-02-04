@@ -7,6 +7,7 @@ import { jwtConstants } from './constants';
 import { JwtModule } from '@nestjs/jwt';
 
 @Module({
+  exports: [UsersService],
   imports: [
     TypeOrmModule.forFeature([User]),
     JwtModule.register({

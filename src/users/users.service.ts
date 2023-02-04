@@ -38,5 +38,11 @@ export class UsersService {
 
         return user
     }
+
+    async findUser(userid: number){
+        const user = this.repo.findOne({where:{id:userid}})
+        //GET USER
+        return user
+    }
     
 }

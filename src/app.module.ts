@@ -8,6 +8,8 @@ import { User } from './users/user.entity'
 import { Room } from './messages/rooms.entity'
 import { Message } from './messages/messages.entity'
 import { ConfigModule } from '@nestjs/config'
+import { JwtStrategy } from './auth/jwt.strategy';
+import { UsersService } from './users/users.service';
 
 
 @Module({
@@ -23,9 +25,9 @@ import { ConfigModule } from '@nestjs/config'
       entities: ["join(__dirname, '**', '/*.entity.{ts,js}')",User,Room,Message],
       synchronize: true
     })
-    }),
+    })
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,JwtStrategy],
 })
 export class AppModule {}
