@@ -19,6 +19,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     //IF USER JWT IS VALID , GET THE USER OF THAT JWT
     const user = await this.repo.findUser(payload.userid)
     console.log(user)
-    return { userId: user };
+    return user;
   }
 }
