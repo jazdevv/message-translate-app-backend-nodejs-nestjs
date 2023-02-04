@@ -20,7 +20,7 @@ import { ConfigModule } from '@nestjs/config'
     TypeOrmModule.forRootAsync({
       useFactory: ()=>({type: 'sqlite',
       database: 'db.sqlite',
-      entities: ["join(__dirname, '**', '*.entity.{ts,js}')"],
+      entities: ["join(__dirname, '**', '/*.entity.{ts,js}')",User,Room,Message],
       synchronize: true
     })
     }),
