@@ -45,4 +45,9 @@ export class UsersService {
         return user
     }
     
+    async findUserByName(username: string){
+        const user = this.repo.findOne({where:{username:username}})
+        //GET USER
+        return user
+    }
 }
