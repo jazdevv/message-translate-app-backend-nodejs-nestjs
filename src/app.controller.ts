@@ -12,9 +12,6 @@ export class AppController {
   @UseGuards(JwtAuthGuard)
   @Get()
   getHello(@Req() request: Request, @User() user: any): string {
-    console.log("-----------------")
-    console.log(user)
-    console.log(request.cookies.jwt_acces_token)
     return this.appService.getHello();
   }
 }
