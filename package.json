@@ -39,9 +39,12 @@
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
+    "pg": "^8.9.0",
+    "promise": "^8.3.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
     "sqlite3": "^5.1.4",
+    "ts-promise": "^2.2.0",
     "typeorm": "^0.3.11",
     "typescript-class-validator": "^0.0.6"
   },

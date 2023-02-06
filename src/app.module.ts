@@ -7,7 +7,7 @@ import { MessagesModule } from './messages/messages.module'
 import { User } from './users/user.entity'
 import { Room } from './messages/rooms.entity'
 import { Message } from './messages/messages.entity'
-import { ConfigModule } from '@nestjs/config'
+import { ConfigModule, ConfigService } from '@nestjs/config'
 import { JwtStrategy } from './auth/jwt.strategy';
 import { UsersService } from './users/users.service';
 
@@ -17,14 +17,20 @@ import { UsersService } from './users/users.service';
   imports: [
     UsersModule,
     MessagesModule,
-    ConfigModule.forRoot({ envFilePath: `.env` }), 
+    ConfigModule.forRoot({ envFilePath: `.env`,isGlobal: true }), 
     //without env variables
-    TypeOrmModule.forRootAsync({
-      useFactory: ()=>({type: 'sqlite',
-      database: 'db.sqlite',
-      entities: ["join(__dirname, '**', '/*.entity.{ts,js}')",User,Room,Message],
-      synchronize: true
-    })
+    TypeOrmModule.forRootAsync({imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get('DB_HOST'),
+        port: +configService.get<number>('DB_PORT'),
+        username: configService.get('DB_USERNAME'),
+        password: configService.get('DB_PASSWORD'),
+        database: configService.get('DB_NAME'),
+        entities: [Room,Message,User],
+        synchronize: true,
+      }),
+      inject: [ConfigService],
     })
   ],
   controllers: [AppController],
