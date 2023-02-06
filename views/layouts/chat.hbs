@@ -10,5 +10,13 @@
     <div class="messages-container"></div>
     <input class="message-input">
     <btn class="message-send">SEND MESSAGE</btn>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        let socket = io();
+        socket.emit('joinroom',{otheruser:'j'})
+        socket.on('connected-room',(data)=>{
+            console.log(data)
+        })
+    </script>
 </body>
 </html>
