@@ -7,10 +7,10 @@ import { join } from 'path';
 import * as hbs from 'express-handlebars';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule,{cors:true});
   app.use(cookieParser());
   app.useGlobalPipes(new ValidationPipe({whitelist: true, transform: true}));
   
-  await app.listen(3000);
+  await app.listen(process.env.PORT);
 }
 bootstrap();
