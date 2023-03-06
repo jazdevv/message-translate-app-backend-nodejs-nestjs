@@ -11,12 +11,6 @@ async function bootstrap() {
   app.use(cookieParser());
   app.useGlobalPipes(new ValidationPipe({whitelist: true, transform: true}));
   
-  //PUBLIC FOLDERS FOR TEMPLATE ENGINE
-  app.useStaticAssets(join(__dirname,'..',  '/public'))  
-  // SET TEMPLATE ENGINE
-  app.setBaseViewsDir(join(__dirname,'..', '/views'));
-  app.engine('hbs', hbs({ extname: 'hbs' }));
-  app.setViewEngine('hbs');
   await app.listen(3000);
 }
 bootstrap();
