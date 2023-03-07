@@ -1,5 +1,6 @@
 import { Injectable, CanActivate, ExecutionContext, BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { WsException } from '@nestjs/websockets';
 import { Observable } from 'rxjs';
 import { UsersService } from 'src/users/users.service';
 
@@ -11,17 +12,21 @@ export class JwtAuthGuardWS implements CanActivate {
   async canActivate(context: ExecutionContext) {
     // get the cookies
     const cookies = context.switchToWs().getClient().handshake.headers.cookie;
+  
+    if(!cookies){
+      throw new WsException('login first')
+    }
     //acces the jwt cookie
     let jwtcookie = cookies.split('; ')
     .find((cookie: string) => cookie.startsWith('acces_token'))
-    .split('=')[1];
+    .split('=')[1]; 
     //decode jwt cookie
     const jwtdecoded = this.jwtService.verify(jwtcookie)
 
-    const loggeduser = await this.repoUsers.findUser(jwtcookie.userid)
+    const loggeduser = await this.repoUsers.findUser(jwtdecoded.userid)
 
     if(!loggeduser){
-        throw new BadRequestException('login first')
+        throw new WsException('login first')
     }
 
     //atach data to request 
