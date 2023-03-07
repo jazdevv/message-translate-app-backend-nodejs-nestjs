@@ -8,7 +8,7 @@ import { UsersService } from "src/users/users.service";
 import { RoomsService } from "./rooms.service";
 
 interface joinRoom {
-    otheruser: string;
+    otheruser: number;
     logguser: User
 }
 
@@ -18,26 +18,30 @@ interface sendMessage {
     message: String;
     image?: String //https://stackoverflow.com/questions/59478402/how-do-i-send-image-to-server-via-socket-io
 }
-@WebSocketGateway()
+@WebSocketGateway({ cors: {
+    origin: "http://localhost:3000",
+    credentials: true
+} })
 export class messageSocketsGateway  implements OnGatewayConnection, OnGatewayDisconnect {
     constructor(private repoRooms: RoomsService,private repoUsers: UsersService){}
     @WebSocketServer()
     server;
-
+    
     handleConnection(){console.log("someone connected")}
 
-    handleDisconnect(){}
+    handleDisconnect(){console.log("someone disconnected")}
 
     //join user to a conversation room with other user
     @UseGuards(JwtAuthGuardWS)
     @SubscribeMessage('joinroom')
     async joinroom(@MessageBody() data: joinRoom,@ConnectedSocket() client: any){
-        //get the otheruser
-        const otheruser = await this.repoUsers.findUserByName(data.otheruser)
+        console.log(data.otheruser)
+        console.log(data.logguser.id)
         //get the room id
-        const roomid = (await this.repoRooms.createOrGetRoom(otheruser.id,data.logguser.id))[0].roomid
+        const roomid = (await this.repoRooms.createOrGetRoom(data.otheruser,data.logguser.id))[0].roomid
         //join the req socket to the room
         client.join(roomid)
+        console.log(`client joined room:${roomid}`)
         //emit a connected room message
         this.server.to(roomid).emit("connected-room","connected room")
     }

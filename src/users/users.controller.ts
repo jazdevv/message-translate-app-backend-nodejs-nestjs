@@ -24,11 +24,9 @@ export class UsersController {
         //CREATE JWET ACCES TOKEN
         const jwtaccestoken = await this.signandsendJWT(newUser.id)
         //SET THE JWT AS RESPONSE COOKIE
-        response.cookie("jwt_acces_token",jwtaccestoken)
+        response.cookie("acces_token",jwtaccestoken,{sameSite:"none",secure:true})//httpOnly:true,
         
-
-        return {jwtaccestoken}
-
+        return
     }
 
     @Post('/login')
@@ -37,21 +35,21 @@ export class UsersController {
         const loggedUser = (await this.repo.loginUser(user.email,user.password)) as User
         //CREATE JWET ACCES TOKEN
         const jwtaccestoken = await this.signandsendJWT(loggedUser.id)
+        
         //SET THE JWT AS RESPONSE COOKIE
-        response.cookie("jwt_acces_token",jwtaccestoken)
-
-        return {jwtaccestoken}
-
+        response.cookie("acces_token",jwtaccestoken,{sameSite:"none",secure:true})
+        
+        return {
+            message:'succes'
+        }
     }
 
     private async signandsendJWT(userid: number){
         //CREATE THE PAYLOAD
         const payload = { userid:userid}
 
-        return {
-            //SIGN THE TOKEN
-            access_token: this.jwtService.sign(payload),
-        };
+        
+        return this.jwtService.sign(payload) 
         
     }
 
