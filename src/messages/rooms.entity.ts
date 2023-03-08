@@ -14,11 +14,11 @@ export class Room{
 
     
     @Column({type:'jsonb'})
-    users: {
+    users:{usersArray: {
 
         userid: number;
         userhavenotis: boolean;
     
-    }[]
+    }[]}
 
 }

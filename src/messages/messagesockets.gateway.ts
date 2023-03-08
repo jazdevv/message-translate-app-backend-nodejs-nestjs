@@ -35,13 +35,13 @@ export class messageSocketsGateway  implements OnGatewayConnection, OnGatewayDis
     @UseGuards(JwtAuthGuardWS)
     @SubscribeMessage('joinroom')
     async joinroom(@MessageBody() data: joinRoom,@ConnectedSocket() client: any){
-        console.log(data.otheruser)
-        console.log(data.logguser.id)
+        
         //get the room id
-        const roomid = (await this.repoRooms.createOrGetRoom(data.otheruser,data.logguser.id))[0].roomid
+        const roomid = (await this.repoRooms.createOrGetRoom(data.otheruser,data.logguser.id))
+        
         //join the req socket to the room
         client.join(roomid)
-        console.log(`client joined room:${roomid}`)
+        
         //emit a connected room message
         this.server.to(roomid).emit("connected-room","connected room")
     }
