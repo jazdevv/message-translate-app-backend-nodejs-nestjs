@@ -10,7 +10,7 @@ export class RoomsService {
     
     async createOrGetRoom(id1:number,id2:number){
         
-        const sqlquery = `SELECT * FROM room WHERE room.users -> 'usersArray' @> '[{"userid":"` +  id1+ `"},{"userid":` +  2 + `}]'::jsonb `
+        const sqlquery = `SELECT * FROM room WHERE room.users -> 'usersArray' @> '[{"userid":"` +  id1+ `"},{"userid":` +  id2 + `}]'::jsonb `
 
         let roomid = await this.repo.query(sqlquery);
         
