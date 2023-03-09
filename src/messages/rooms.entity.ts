@@ -1,12 +1,7 @@
 import { type } from 'os';
 import { User } from 'src/decorators/get-user.decorator';
-import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn, ManyToOne } from 'typeorm';
-interface UsersInterface {
+import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn, ManyToMany } from 'typeorm';
 
-    userid: number
-    userhavenotis: boolean;
-
-}
 @Entity()
 export class Room{
     @PrimaryColumn()
@@ -21,4 +16,9 @@ export class Room{
     
     }[]}
 
+    @Column({default:false})
+    isGroup: boolean;
+
+    @Column({default:null})
+    lastMessageDate: Date
 }
