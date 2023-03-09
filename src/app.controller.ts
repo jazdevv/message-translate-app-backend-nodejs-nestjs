@@ -1,7 +1,7 @@
 import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
 import { Request } from 'express';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
+//import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { User } from './decorators/get-user.decorator';
 
 @Controller()
@@ -9,7 +9,7 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   //TEST ROUTE FOR THE GUARD AND DECORATORS
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Get()
   getHello(@Req() request: Request, @User() user: any): string {
     return this.appService.getHello();
