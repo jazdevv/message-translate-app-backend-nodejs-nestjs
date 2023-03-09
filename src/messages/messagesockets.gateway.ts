@@ -37,8 +37,8 @@ export class messageSocketsGateway  implements OnGatewayConnection, OnGatewayDis
     async joinroom(@MessageBody() data: joinRoom,@ConnectedSocket() client: any){
         
         //get the room id
-        const roomid = (await this.repoRooms.createOrGetRoom(data.otheruser,data.logguser.id))
-        
+        const roomid = (await this.repoRooms.createOrGetRoom(data.otheruser,data.logguser.id))[0].roomid
+
         //join the req socket to the room
         client.join(roomid)
         
