@@ -4,7 +4,7 @@ import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn, ManyToMany } fro
 
 @Entity()
 export class Room{
-    @PrimaryColumn()
+    @PrimaryGeneratedColumn()
     roomid: string;
 
     
