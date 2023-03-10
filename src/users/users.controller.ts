@@ -1,4 +1,4 @@
-import { Controller, Get, Patch, Post, UsePipes, Res } from '@nestjs/common';
+import { Controller, Get, Patch, Post, UsePipes, Res, UseGuards } from '@nestjs/common';
 import { Body } from '@nestjs/common/decorators';
 import { UsersService } from './users.service';
 import { signupDto } from './dtos/signup-user.dto';
@@ -6,6 +6,8 @@ import { loginDto } from './dtos/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { User } from './user.entity';
 import { Response } from 'express';
+import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
+import { User as UserDecorator } from 'src/decorators/get-user.decorator';
 
 
 @UsePipes()
@@ -42,6 +44,13 @@ export class UsersController {
         return {
             message:'succes'
         }
+    }
+
+    @Get('/me')
+    @UseGuards(JwtAuthGuard)
+    myprofile(@UserDecorator() user){
+        const {password,...userData} = user
+        return userData
     }
 
     private async signandsendJWT(userid: number){
