@@ -1,5 +1,5 @@
 import { UseGuards } from "@nestjs/common/decorators";
-import { OnGatewayConnection, OnGatewayDisconnect, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
+import { OnGatewayConnection, OnGatewayDisconnect, WebSocketGateway, WebSocketServer, WsException } from "@nestjs/websockets";
 import { ConnectedSocket, MessageBody, SubscribeMessage } from "@nestjs/websockets/decorators";
 import { Socket } from "dgram";
 import { JwtAuthGuardWS } from "src/guards/jwt-auth-ws.guard";
@@ -8,8 +8,9 @@ import { UsersService } from "src/users/users.service";
 import { RoomsService } from "./rooms.service";
 
 interface joinRoom {
-    otheruser: number;
-    logguser: User
+    otheruser?: number;
+    logguser: User,
+    roomid?: number,
 }
 
 interface sendMessage {
@@ -36,8 +37,25 @@ export class messageSocketsGateway  implements OnGatewayConnection, OnGatewayDis
     @SubscribeMessage('joinroom')
     async joinroom(@MessageBody() data: joinRoom,@ConnectedSocket() client: any){
         
-        //get the room id
-        const roomid = await this.repoRooms.createOrGetRoom(data.otheruser,data.logguser.id)
+        if(!data.roomid&&!data.otheruser){
+            throw new WsException('missing params')
+        }
+        //roomid of the converstion
+        let roomid: Number;
+
+        //choose first option if the req have roomid and otheruser
+        if(data.roomid){
+            //if the req body have room id verify that the user is part of it
+            const isValid = await this.repoRooms.isUserInRoomID(data.logguser.id,data.roomid)
+            if(isValid===false){
+                throw new WsException('Invalid room')
+            }else{
+                roomid= data.roomid
+            }
+        }else if(data.otheruser){ //get the room id if the req body dont add it 
+            console.log("otheruser",data.otheruser)
+            roomid = await this.repoRooms.createOrGetRoom(data.otheruser,data.logguser.id)
+        }
         console.log(roomid)
         //join the req socket to the room
         client.join(roomid)

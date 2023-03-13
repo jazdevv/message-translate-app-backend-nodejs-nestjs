@@ -5,7 +5,7 @@ import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn, ManyToMany } fro
 @Entity()
 export class Room{
     @PrimaryGeneratedColumn()
-    roomid: string;
+    roomid: number;
 
     
     @Column({type:'jsonb'})

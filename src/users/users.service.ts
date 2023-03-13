@@ -46,7 +46,7 @@ export class UsersService {
     }
 
     async findUserProfile(userid: number){
-        const user = await this.repo.findOne({where:{id:userid},select:['username','profileImage']})
+        const user = await this.repo.findOne({where:{id:userid},select:['username','profileImage','id']})
         //GET USER
         return user
     }

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { WsException } from '@nestjs/websockets';
 import { User } from 'src/users/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { Repository } from 'typeorm';
@@ -10,6 +11,13 @@ export class RoomsService {
     constructor(@InjectRepository(Room) private repo: Repository<Room>, private readonly repoUsers:UsersService){}
     
     async createOrGetRoom(id1:number,id2:number){
+        //VERIFY USER EXISTS
+        const user = await this.repoUsers.findUser(id1);
+        if(!user){
+            console.log('throwingerror')
+            throw new WsException('Invalid Room')
+        }
+
         const sqlquery = `SELECT * FROM room WHERE room.users -> 'usersArray' @> '[{"userid":` +  id1+ `},{"userid":` +  id2 + `}]'::jsonb `
         //GET ROOM ID IF EXISTS
         let room = await this.repo.query(sqlquery);
@@ -44,6 +52,13 @@ export class RoomsService {
         
         
         return filtredRooms
+    }
+
+    async isUserInRoomID(user: number,roomid: number){
+        const room = await this.repo.findOne({where:{roomid:roomid}})
+        const isValid = room.users.usersArray.some(arrayUser=>arrayUser.userid===user)
+
+        return isValid
     }
 
 }
