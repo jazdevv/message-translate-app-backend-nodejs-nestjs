@@ -42,7 +42,8 @@ export class UsersController {
         response.cookie("acces_token",jwtaccestoken,{sameSite:"none",secure:true})
         
         return {
-            message:'succes'
+            message:'succes',
+            acces_token:jwtaccestoken
         }
     }
 
