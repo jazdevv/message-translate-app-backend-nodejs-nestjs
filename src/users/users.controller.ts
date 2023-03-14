@@ -26,9 +26,12 @@ export class UsersController {
         //CREATE JWET ACCES TOKEN
         const jwtaccestoken = await this.signandsendJWT(newUser.id)
         //SET THE JWT AS RESPONSE COOKIE
-        response.cookie("acces_token",jwtaccestoken,{sameSite:"none",secure:true})//httpOnly:true,
+        response.cookie("acces_token",jwtaccestoken,{sameSite:"none",secure:true})
         
-        return
+        return {
+            message:'succes',
+            acces_token:jwtaccestoken
+        }
     }
 
     @Post('/login')
