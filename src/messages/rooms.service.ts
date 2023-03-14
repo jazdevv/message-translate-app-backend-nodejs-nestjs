@@ -56,6 +56,9 @@ export class RoomsService {
 
     async isUserInRoomID(user: number,roomid: number){
         const room = await this.repo.findOne({where:{roomid:roomid}})
+        if(!room){
+            return false
+        }
         const isValid = room.users.usersArray.some(arrayUser=>arrayUser.userid===user)
 
         return isValid
