@@ -5,6 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { jwtConstants } from './constants';
 import { JwtModule } from '@nestjs/jwt';
+import { AppModule } from 'src/app.module';
+import { S3Module } from 'src/s3/s3.module';
 
 @Module({
   exports: [UsersService],
@@ -13,7 +15,8 @@ import { JwtModule } from '@nestjs/jwt';
     JwtModule.register({
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '7776000s' },
-    })
+    }),
+    S3Module
   ],
   controllers: [UsersController],
   providers: [UsersService]

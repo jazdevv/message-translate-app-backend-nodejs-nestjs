@@ -4,7 +4,12 @@ import { User } from './user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt'
 
+interface dataToUpdate {
+    username: String,
+    status: String  
+}
 @Injectable()
+
 export class UsersService {
     constructor(@InjectRepository(User) private repo: Repository<User>){}
 
@@ -55,5 +60,20 @@ export class UsersService {
         const user = this.repo.findOne({where:{username:username}})
         //GET USER
         return user
+    }
+
+    async updateProfilePic(key: string, userid: number){
+        const query = `UPDATE "user" SET "profileImage" = '${key}' WHERE "id" = ${userid}`
+        await this.repo.query(query);
+
+        return
+    }
+
+    
+    async updateUserProfile(user,userid: number){
+        const query = `UPDATE "user" SET "username" = '${user.username}',"status" = '${user.status}' WHERE "id" = ${userid}`
+        await this.repo.query(query);
+
+        return
     }
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Patch, Post, UsePipes, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Patch, Post, UsePipes, Res, UseGuards, UseInterceptors, UploadedFile, ParseFilePipeBuilder } from '@nestjs/common';
 import { Body } from '@nestjs/common/decorators';
 import { UsersService } from './users.service';
 import { signupDto } from './dtos/signup-user.dto';
@@ -8,6 +8,8 @@ import { User } from './user.entity';
 import { Response } from 'express';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 import { User as UserDecorator } from 'src/decorators/get-user.decorator';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { S3Service } from 'src/s3/s3.service';
 
 
 @UsePipes()
@@ -15,7 +17,8 @@ import { User as UserDecorator } from 'src/decorators/get-user.decorator';
 export class UsersController {
     constructor(
         private repo: UsersService,
-        private jwtService: JwtService 
+        private jwtService: JwtService,
+        private S3Service: S3Service
     ){}
 
     @Post('/signup')
@@ -52,9 +55,34 @@ export class UsersController {
 
     @Get('/me')
     @UseGuards(JwtAuthGuard)
-    myprofile(@UserDecorator() user){
+    myprofile(@UserDecorator() user: User){
         const {password,...userData} = user
         return userData
+    }
+
+    @UseInterceptors(FileInterceptor('file'))
+    @Post('/UpdateMe')
+    @UseGuards(JwtAuthGuard)
+    async updateMe( 
+        @UserDecorator() loggUser: User,
+        @Body() user: any,
+        @UploadedFile(
+            new ParseFilePipeBuilder()
+            .build({fileIsRequired: false,}),
+        ) file?: Express.Multer.File,
+       
+    )
+    {   
+        let key = `profileImage/${loggUser.id}`;
+    
+        if(file?.buffer){
+           this.S3Service.uploadImageToS3(key,file.buffer);
+           this.repo.updateProfilePic(key,loggUser.id);
+        }
+        
+        this.repo.updateUserProfile({username:user.username,status:user.status},loggUser.id)
+        
+        return
     }
 
     private async signandsendJWT(userid: number){

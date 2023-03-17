@@ -8,11 +8,14 @@ export class User{
 
     @Column({unique: true})
     username: string;
+    
+    @Column({default: '',length: 100})
+    status: string;
 
     @Column({unique: true})
-    email: string
+    email: string;
 
-    @Column({default:""})
+    @Column({default:"default"})
     profileImage: string;
 
     @Column()
