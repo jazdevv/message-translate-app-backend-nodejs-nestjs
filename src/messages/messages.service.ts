@@ -16,10 +16,11 @@ export class MessagesService {
         let image_uuid: string = null;
         if(image){
             //generate an image uuid
+            image_uuid  = "message/image/" + uuidv4() + "_date_" + Date.now();
             type.push("image")
         }
         if(text){
-            image_uuid  = "message/image/" + uuidv4() + "_date_" + Date.now();
+            
             type.push("text")
         }
         const message = await this.repo.create({UserSender:createdBy.id,text,roomid,type,imageUrl:image_uuid});
