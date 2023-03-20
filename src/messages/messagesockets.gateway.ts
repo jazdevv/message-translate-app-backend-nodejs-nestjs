@@ -6,7 +6,8 @@ import { JwtAuthGuardWS } from "src/guards/jwt-auth-ws.guard";
 import { User } from "src/users/user.entity";
 import { UsersService } from "src/users/users.service";
 import { RoomsService } from "./rooms.service";
-
+import { S3Service } from "src/s3/s3.service";
+import { MessagesService } from "./messages.service";
 interface joinRoom {
     otheruser?: number;
     logguser: User,
@@ -14,10 +15,10 @@ interface joinRoom {
 }
 
 interface sendMessage {
-    otheruser: string;
+    roomid: number;
     logguser: User;
-    message: String;
-    image?: String //https://stackoverflow.com/questions/59478402/how-do-i-send-image-to-server-via-socket-io
+    message?: string;
+    image?: any //https://stackoverflow.com/questions/59478402/how-do-i-send-image-to-server-via-socket-io
 }
 
 const sendMessageToSocket = (client:any,server:any,eventName:string,data:any)=>{
@@ -31,7 +32,7 @@ const sendMessageToSocket = (client:any,server:any,eventName:string,data:any)=>{
     credentials: true
 } })
 export class messageSocketsGateway  implements OnGatewayConnection, OnGatewayDisconnect {
-    constructor(private repoRooms: RoomsService,private repoUsers: UsersService){}
+    constructor(private repoRooms: RoomsService,private repoMessages:MessagesService ,private repoUsers: UsersService, private S3Service: S3Service){}
     @WebSocketServer()
     server;
     
@@ -80,26 +81,28 @@ export class messageSocketsGateway  implements OnGatewayConnection, OnGatewayDis
 
     //send message
     @UseGuards(JwtAuthGuardWS)
-    @SubscribeMessage('chat-message')
+    @SubscribeMessage('roomid-messages-listener')
     async sendmessage(@MessageBody() data: sendMessage,@ConnectedSocket() client: any){
-        //get the otheruser
-        const otheruser = await this.repoUsers.findUserByName(data.otheruser)
-
-        //get the room id
-        const roomid = (await this.repoRooms.createOrGetRoom(otheruser.id,data.logguser.id))[0].roomid
         
-        //check if message got images, ithen send to aws s3
-
+        if(!data.message && !data.image){
+            throw new WsException('Invalid input');
+        }
+        
+        //check if the user is valid to send messages to that roomid
+        const isValid = await this.repoRooms.isUserInRoomID(data.logguser.id,data.roomid);
+        if(isValid===false){
+            throw new WsException('Invalid room');
+        }
+        
         //save message to the database
-
-        //send notification to the other user
-        //this.server.to(otheruser._id).emit("user-notification",)
-
-        //join the req socket to the room if he is not joined
-        client.join(roomid)
+        const message = await this.repoMessages.createMessage(data.logguser,data.message,data.image,data.roomid);
+    
+        if(data.image){
+            this.S3Service.uploadImageToS3(message.imageUrl,data.image);
+        }
 
         //emit the message to socket room (sender and receipant socket recives the message)
-        this.server.to(roomid).emit("chat-message",data.message)
+        this.server.to(data.roomid).emit("roomid-messages-listener",message)
     }
 }
     

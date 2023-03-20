@@ -10,6 +10,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from 'src/users/constants';
 import { UsersService } from 'src/users/users.service';
 import { UsersModule } from 'src/users/users.module';
+import { S3Module } from 'src/s3/s3.module';
 
 @Module({
   imports: [
@@ -18,7 +19,8 @@ import { UsersModule } from 'src/users/users.module';
     JwtModule.register({
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '7776000s' },
-    })
+    }),
+    S3Module
   ],
   controllers: [MessagesController],
   providers: [MessagesService,RoomsService, messageSocketsGateway]
