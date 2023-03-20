@@ -29,7 +29,12 @@ export class MessagesService {
         return message
     }
 
-    getMessages(){
+    async getMessages(roomid: number,skip: number){
         
+        const sqlquery = `SELECT * FROM message WHERE roomid = ${roomid} ORDER BY "createdAt" DESC LIMIT 15 OFFSET ${skip}` 
+        const messages = await this.repo.query(sqlquery);
+        
+        return messages
     }
 }
+ 

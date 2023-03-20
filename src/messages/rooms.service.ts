@@ -64,4 +64,35 @@ export class RoomsService {
         return isValid
     }
 
+    async getConversationDetails(roomid: number,logguserid: number){
+        //VERIFY USER IN THE ROOM
+        const room = await this.repo.findOne({where:{roomid:roomid}});
+
+        if(!room){
+            return false
+        }
+        //SET CONVERSATION DETAILS
+        let conversationDetails;
+        if(room.isGroup === false){
+            let otheruser;
+            for (let user of room.users.usersArray){
+                if(user.userid!=logguserid){
+                    otheruser = await this.repoUsers.findUserProfile(user.userid) 
+                }
+            }
+
+            conversationDetails = {
+                name: otheruser.username,
+                profileImage: otheruser.profileImage,
+                status: otheruser.status,
+                id: otheruser.id
+            }
+        }else{
+            //get details of group room
+        }
+        
+        return conversationDetails
+    }
+
+
 }
