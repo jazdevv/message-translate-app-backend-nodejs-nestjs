@@ -23,4 +23,10 @@ export class User{
 
     @Column({default: false})
     isGoogleUser: boolean
+
+    @Column({default:true})
+    translateMessages: boolean
+
+    @Column()
+    translateTo: string
 }
