@@ -85,6 +85,20 @@ export class UsersController {
         return
     }
 
+    @UseInterceptors(FileInterceptor('file'))
+    @Post('/UpdateMyConfig')
+    @UseGuards(JwtAuthGuard)
+    async updateMyConfig( 
+        @UserDecorator() loggUser: User,
+        @Body() user: any,       
+    )
+    {   
+        
+        this.repo.updateUserConfig({translateMessages:user.translateMessages,translateTo:user.translateTo},loggUser.id);
+        
+        return
+    }
+
     private async signandsendJWT(userid: number){
         //CREATE THE PAYLOAD
         const payload = { userid:userid}

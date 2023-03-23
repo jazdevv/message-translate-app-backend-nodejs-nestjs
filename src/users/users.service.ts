@@ -76,4 +76,12 @@ export class UsersService {
 
         return
     }
+
+    async updateUserConfig(user,userid: number){
+    
+        const query = `UPDATE "user" SET "translateMessages" = '${user.translateMessages}',"translateTo" = '${user.translateTo}' WHERE "id" = ${userid}`
+        await this.repo.query(query);
+
+        return
+    }
 }
