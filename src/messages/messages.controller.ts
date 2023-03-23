@@ -27,7 +27,7 @@ export class MessagesController {
             throw new WsException('not authorized');
         }
         //GET MESSAGES OF CONVERSATION
-        const messages = await this.repoMessages.getMessages(roomid,skip);
+        const messages = await this.repoMessages.getMessages(roomid,skip,user);
         
         if(firstrender===true){
             //GET CONVERSATION DETAILS
