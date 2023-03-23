@@ -6,11 +6,15 @@ import { Message } from './messages.entity';
 import { RoomsService } from './rooms.service';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
+import { ConfigService } from '@nestjs/config';
 
 
 @Injectable()
 export class MessagesService {
-    constructor(@InjectRepository(Message) private repo: Repository<Message>, private readonly repoRooms:RoomsService){}
+    private x_rapid_apikey: string;
+    constructor(@InjectRepository(Message) private repo: Repository<Message>, private readonly repoRooms:RoomsService,private configService: ConfigService){
+        this.x_rapid_apikey = this.configService.get('X_RAPID_APIKEY');
+    }
 
     async createMessage(createdBy: User, text: string, image: any, roomid: number){
         //determine the data types of the message
@@ -40,7 +44,7 @@ export class MessagesService {
         if(user.translateMessages === false){
             return messages
         }
-        
+
         //TRANSLATE MESSAGES IF USER HAVE THAT OPTION ACTIVATED
 
         //create array of only the messages
@@ -81,14 +85,20 @@ export class MessagesService {
             url: 'https://translate281.p.rapidapi.com/',
             headers: {
                 'content-type': 'application/x-www-form-urlencoded',
-                'X-RapidAPI-Key': 'bc450e073fmsh0423cd5a3083d3dp1c5018jsn5c042f771a6d',
+                'X-RapidAPI-Key': this.x_rapid_apikey,
                 'X-RapidAPI-Host': 'translate281.p.rapidapi.com'
             },
             data: encodedParams
             };
 
             const res = await axios.request(options);
-            const translatedMessages = res.data.response.split(',')
+            let translatedMessages;
+            if(res.data.response.length>1){
+                translatedMessages = res.data.response.split(',')
+            }else{
+                translatedMessages = res.data.response
+            }
+            console.log(translatedMessages)
             return {messages:translatedMessages,translated:true };
         }catch(err){
             console.log(err)

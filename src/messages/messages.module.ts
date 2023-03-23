@@ -11,6 +11,7 @@ import { jwtConstants } from 'src/users/constants';
 import { UsersService } from 'src/users/users.service';
 import { UsersModule } from 'src/users/users.module';
 import { S3Module } from 'src/s3/s3.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -20,7 +21,8 @@ import { S3Module } from 'src/s3/s3.module';
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '7776000s' },
     }),
-    S3Module
+    S3Module,
+    ConfigModule
   ],
   controllers: [MessagesController],
   providers: [MessagesService,RoomsService, messageSocketsGateway]
