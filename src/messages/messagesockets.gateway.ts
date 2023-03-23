@@ -95,12 +95,18 @@ export class messageSocketsGateway  implements OnGatewayConnection, OnGatewayDis
         }
         
         //save message to the database
-        const message = await this.repoMessages.createMessage(data.logguser,data.message,data.image,data.roomid);
-    
+        let message = await this.repoMessages.createMessage(data.logguser,data.message,data.image,data.roomid);
+        
+        //TRANSLATE MESSAGE IF USER HAVE THAT OPTION ACTIVATED
+        if(data.logguser.translateMessages === true){
+            const messageText = await this.repoMessages.translateMessage(message.text,data.logguser.translateTo);
+            message = {...message,text:messageText.messages[0]};
+        }
+
         if(data.image){
             this.S3Service.uploadImageToS3(message.imageUrl,data.image);
         }
-
+        
         //emit the message to socket room (sender and receipant socket recives the message)
         this.server.to(data.roomid).emit("roomid-messages-listener",message)
     }
