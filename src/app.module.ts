@@ -10,6 +10,7 @@ import { Message } from './messages/messages.entity'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { JwtStrategy } from './auth/jwt.strategy';
 import { UsersService } from './users/users.service';
+import { readFileSync } from 'fs';
 
 
 @Module({
@@ -23,12 +24,16 @@ import { UsersService } from './users/users.service';
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
         host: configService.get('DB_HOST'),
-        port: +configService.get<number>('DB_PORT'),
+        port: configService.get<number>('DB_PORT'),
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_NAME'),
         entities: [Room,Message,User],
-        synchronize: true,
+        ssl:{
+          ca: readFileSync("./src/config/rds-ca-2019-root.pem")
+            .toString()
+        },
+        synchronize: true,//should replace with migrations
       }),
       inject: [ConfigService],
     })
