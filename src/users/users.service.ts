@@ -84,4 +84,10 @@ export class UsersService {
 
         return
     }
+
+    async findUsersByStartingLetters(characters: string){
+        const query = `SELECT "id", "username", "profileImage" from "user" WHERE username LIKE '${characters}%' LIMIT 10`
+
+        return await this.repo.query(query);
+    }
 }

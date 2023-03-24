@@ -1,4 +1,4 @@
-import { Controller, Get, Patch, Post, UsePipes, Res, UseGuards, UseInterceptors, UploadedFile, ParseFilePipeBuilder } from '@nestjs/common';
+import { Controller, Get, Patch, Post, UsePipes, Res, UseGuards, UseInterceptors, UploadedFile, ParseFilePipeBuilder, Param } from '@nestjs/common';
 import { Body } from '@nestjs/common/decorators';
 import { UsersService } from './users.service';
 import { signupDto } from './dtos/signup-user.dto';
@@ -107,5 +107,15 @@ export class UsersController {
         return this.jwtService.sign(payload) 
         
     }
+
+    
+    @Get('/searchUsers/:queryLetters')
+    @UseGuards(JwtAuthGuard)
+    async searchUsers(@Param('queryLetters') queryLetters: string){
+        
+        return await this.repo.findUsersByStartingLetters(queryLetters)
+    
+    }
+
 
 }
