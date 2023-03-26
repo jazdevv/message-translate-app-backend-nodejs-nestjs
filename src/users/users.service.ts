@@ -13,7 +13,7 @@ interface dataToUpdate {
 export class UsersService {
     constructor(@InjectRepository(User) private repo: Repository<User>){}
 
-    async createUser(email: string, username: string,password: string,isGoogleUser: boolean) {
+    async createUser(email: string, username: string,password: string,isGoogleUser: boolean,translateMessages: boolean,translateTo: string) {
 
         //CHECK USER DONT EXIST WITH THAT EMAIL OR USERNAME
         const EmailExists =  await this.repo.find({where:{email:email}})
@@ -24,7 +24,7 @@ export class UsersService {
         const salt = await bcrypt.genSalt();
         const hashedpassword = await bcrypt.hash(password,salt)
         //CREATE THE USER
-        const user = this.repo.create({email,username,password:hashedpassword,isGoogleUser})
+        const user = this.repo.create({email,username,password:hashedpassword,isGoogleUser,translateMessages,translateTo})
         this.repo.save(user);
 
         return user

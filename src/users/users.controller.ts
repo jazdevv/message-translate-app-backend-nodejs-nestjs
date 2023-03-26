@@ -24,8 +24,7 @@ export class UsersController {
     @Post('/signup')
     async signupUser(@Body() user: signupDto, @Res({ passthrough: true }) response: Response ){
         //CREATE THE USER
-        const newUser = (await this.repo.createUser(user.email, user.username, user.password, false))as User
-
+        const newUser = (await this.repo.createUser(user.email, user.username, user.password, false, user.translateMessages, user.translateTo))as User
         //CREATE JWET ACCES TOKEN
         const jwtaccestoken = await this.signandsendJWT(newUser.id)
         //SET THE JWT AS RESPONSE COOKIE

@@ -93,11 +93,9 @@ export class MessagesService {
 
             const res = await axios.request(options);
             let translatedMessages;
-            if(res.data.response.length>1){
+            
                 translatedMessages = res.data.response.split(',')
-            }else{
-                translatedMessages = res.data.response
-            }
+            
             console.log(translatedMessages)
             return {messages:translatedMessages,translated:true };
         }catch(err){

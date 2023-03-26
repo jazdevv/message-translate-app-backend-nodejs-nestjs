@@ -1,4 +1,4 @@
-import { IsEmail, IsString, MinLength } from "class-validator"
+import { IsBoolean, IsEmail, IsString, MinLength } from "class-validator"
 
 export class signupDto {
     
@@ -12,4 +12,10 @@ export class signupDto {
     @IsString()
     @MinLength(4)
     password: string
+
+    @IsBoolean()
+    translateMessages: boolean
+    
+    @IsString()
+    translateTo: string
 }
