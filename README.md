@@ -1,54 +1,30 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+<h3>RESUME</h3>
+This is the backend code repository of Lingua chat, a message chat aplication that auto translate the messages from sender language to receivor language.
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+In this document i gonna talk about what technologies i have used for it and the architecture of the project.
+In the frontend side i make use of React wich repository of the project is: https://github.com/jazdevv/message-translate-app-frontend-react
 
-  
-## Description
+Every time i develop a project i like to develop something innovator and that can help the people in one way or another, and this is one of the apps that do it. Lot of people want to comunicate with other people that speak different language and at the end they usually end up using a translator tool like google translator to do it, doing that they lose time and dont have the same ilusion to speak with other people due the time they spend translating.
+Is with this app that the problem gets solved, every message its translated with google API before reach the client device if user have that option activated, so the users directly read the translated messages making them feel like they speaking to someone that speak his language.
 
-This is a chat-app-nestjs built mainly with the NodeJs framework Nestjs wich mainly use an OOP programming style, typeORM with MySql(MySQL for development), and socketio for real time messages and notifications
+<h3>TECNHNOLOGIES USED</h3>
+In backend side i have used Node.js with typescript using his popular framework Nest.js.
+I developed the backend thinking in scalability and security of the aplication, i think that dont matter if its a personal project like this or if its a project for someone else like a company, you always should writte good code.
 
-im not gonna use the enviroiment variables method that nestjs documentation talk about, gonna use .env file and process.env instead because the production env variables are gonna be setup by the online host.
+Getting inside wich technlogies do i use for this project i choose Nest js instead of express mainly because i like to use it due to its rigid and solid OOP structure and pre-build components that makes the development faster.
+Nest combines perfectly with typeORM so i use it toghether with Postgree database hosted on AWS rds as database infrastructure.
+AWS S3 is used for image hosting of the images of the application, and each object url is saved on the database.
+Authentication uses jwt cookies system, validated in each request.
+For connection between react and node is used http and websockets(socketio) for real time comunication.
 
-## Installation
+<h3>ARCHITECTURE</h3>
 
-```bash
-$ npm install
-```
-
-## Running the app
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Database diagram:
+<img src='/DATABASE-DIAGRAM.PNG'>
 
 
-## License
+Explanation: Messages are organized and sended with a conversation id. That conversation id is a database row with data like unique id , wich users are in and less important data. Each time a user want to acces to wich messages have sended or received with other user it does with the conversation id. The conversations id is a critical part of the aplication, malicious people have acces to ton of critical and confidential data it its not protected, and its so that validation is executed every time a user wants to interact with each conversation id.
 
-Nest is [MIT licensed](LICENSE).
+The translation of the messages is done every time user asks for messages, where that messages are fetched from the database and passed to a translation function with the user profile data. 
+That function is responsable to check if the user want his messages gets translated to his election language, and if he wants, an https request is send to google translator api with the messages that want to translate. Once the response is received the translated messages are sended to the user instead of the untranslated ones.
+

@@ -28,7 +28,7 @@ const sendMessageToSocket = (client:any,server:any,eventName:string,data:any)=>{
 }
 
 @WebSocketGateway({ cors: {
-    origin: "http://localhost:3000",
+    origin: "*",
     credentials: true
 } })
 export class messageSocketsGateway  implements OnGatewayConnection, OnGatewayDisconnect {
