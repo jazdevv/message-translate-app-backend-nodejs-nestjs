@@ -28,3 +28,8 @@ Explanation: Messages are organized and sended with a conversation id. That conv
 The translation of the messages is done every time user asks for messages, where that messages are fetched from the database and passed to a translation function with the user profile data. 
 That function is responsable to check if the user want his messages gets translated to his election language, and if he wants, an https request is send to google translator api with the messages that want to translate. Once the response is received the translated messages are sended to the user instead of the untranslated ones.
 
+<h4>DEPLOYMENT</h4>
+App was deployed on aws ec2 with NGINX as reverse proxy, and the database on awd rds. I initially encountered several errors when attempting to configure the WebSocket Socket.IO with Nginx. However, I was able to overcome these challenges and successfully set it up
+
+nginx config:
+<img src='/NGINX-CONFIG.PNG'>
